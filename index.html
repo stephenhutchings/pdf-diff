@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare PDFs</title>
+  <link rel="stylesheet" href="./index.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Compare PDFs</h1>
+
+    <p>
+      Compare the pages of two PDF files side-by-side. Any differences between
+      the two documents are highlighted in red. Each page is scored based on the number of pixels that differ.
+    </p>
+  </header>
+
+  <button id="drop">
+    Select two PDFs to compare.
+    Drag and drop or click to select files.
+    <input type="file" id="file" multiple accept=".pdf" style="display: none;">
+  </button>
+
+  <output id="result">
+    <div id="error"></div>
+    <nav id="menu" tabindex="-1"></nav>
+    <ol id="pages"></ol>
+  </output>
+
+  <footer>
+    <a href="https://www.s-ings.com">s-ings.com</a>
+
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <script src="./index.js"></script>
+
+</body>
+
+</html>
