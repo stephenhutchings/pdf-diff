@@ -31,6 +31,8 @@ const toDataURL = (blob) => {
   })
 }
 
+const errorRGB = [235, 14, 98]
+
 // TODO: Cancel the running process when adding more files
 const handleFiles = (e) => {
   e.preventDefault()
@@ -151,8 +153,15 @@ const compareTitles = (titleA, titleB) => {
 }
 
 const comparePages = (ctxA, ctxB) => {
-  const width = Math.max(ctxA.canvas.width, ctxB.canvas.width)
-  const height = Math.max(ctxA.canvas.height, ctxB.canvas.height)
+  const width = Math.max(
+    ctxA ? ctxA.canvas.width : 0,
+    ctxB ? ctxB.canvas.width : 0
+  )
+
+  const height = Math.max(
+    ctxA ? ctxA.canvas.height : 0,
+    ctxB ? ctxB.canvas.height : 0
+  )
 
   const ctx = createCanvasContext(width, height)
 
@@ -179,33 +188,45 @@ const comparePages = (ctxA, ctxB) => {
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 4
+      const R = (y * width + x) * 4
+      const G = R + 1
+      const B = G + 1
+      const A = B + 1
 
-      const r1 = imgA.data[i]
-      const g1 = imgA.data[i + 1]
-      const b1 = imgA.data[i + 2]
-      const r2 = imgB.data[i]
-      const g2 = imgB.data[i + 1]
-      const b2 = imgB.data[i + 2]
+      const a1 = imgA.data[A]
+      const a2 = imgB.data[A]
 
-      if (r1 !== r2 || g1 !== g2 || b1 !== b2) {
-        diff.data[i] = 235
-        diff.data[i + 1] = 14
-        diff.data[i + 2] = 98
-        diff.data[i + 3] = 255
-        differenceScore += pixelShare
-      } else if (isFinite(r1 + r2 + g1 + g2 + b1 + b2)) {
-        diff.data[i] = 255
-        diff.data[i + 1] = 255
-        diff.data[i + 2] = 255
-        diff.data[i + 3] = 255
+      let k = 1
+
+      if (a1 && a2) {
+        const r1 = imgA.data[R]
+        const g1 = imgA.data[G]
+        const b1 = imgA.data[B]
+        const r2 = imgB.data[R]
+        const g2 = imgB.data[G]
+        const b2 = imgB.data[B]
+
+        const rd = 0.2126 * (Math.abs(r1 - r2) / 255)
+        const gd = 0.7152 * (Math.abs(g1 - g2) / 255)
+        const bd = 0.0722 * (Math.abs(b1 - b2) / 255)
+
+        k = (rd + gd + bd) ** 0.3
+      } else if (!a1 || !a2) {
+        k = 0.5
       }
+
+      diff.data[R] = 255 + k * (errorRGB[0] - 255)
+      diff.data[G] = 255 + k * (errorRGB[1] - 255)
+      diff.data[B] = 255 + k * (errorRGB[2] - 255)
+      diff.data[A] = 255
+
+      differenceScore += k
     }
   }
 
   ctx.putImageData(diff, 0, 0)
 
-  return { ctx, score: Math.pow(differenceScore, 0.7) }
+  return { ctx, score: differenceScore * pixelShare }
 }
 
 const renderImage = async (canvas, title, range) => {
