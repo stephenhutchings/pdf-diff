@@ -172,6 +172,8 @@ button {
   gap: 5rem;
   list-style: none;
   padding: 0.5rem 0;
+  width: 0;
+  flex-grow: 1;
 }
 
 .page {
