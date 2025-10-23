@@ -81,6 +81,11 @@ button {
   background: none;
 }
 
+a,
+button {
+  transition-duration: 300ms;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-border);
   outline-offset: 2px;
@@ -110,7 +115,6 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: 300ms;
 }
 
 #drop:hover,
@@ -149,7 +153,6 @@ button {
   padding: 0.25rem;
   border-radius: 0.25rem;
   background: var(--color-page-hover);
-  transition-duration: 300ms;
   min-width: 1.75rem;
   min-height: 1.75rem;
 }
@@ -182,8 +185,6 @@ button {
   gap: 2rem 0.5rem;
   padding: 0.5rem 0;
   border-radius: 0.5rem;
-  transition-duration: 300ms;
-
   min-height: calc(100vh - 2rem);
   scroll-margin-block: 1rem;
 }
