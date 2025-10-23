@@ -98,7 +98,7 @@ const compareFiles = async (pdfA, pdfB) => {
       await renderContext(pageA, ctxA)
       await renderContext(pageB, ctxB)
 
-      const diff = comparePages(ctxA, ctxB)
+      const diff = comparePages(pageA && ctxA, pageB && ctxB)
 
       await renderPage({
         pageNumber: i,
@@ -154,6 +154,16 @@ const comparePages = (ctxA, ctxB) => {
   const width = Math.max(ctxA.canvas.width, ctxB.canvas.width)
   const height = Math.max(ctxA.canvas.height, ctxB.canvas.height)
 
+  const ctx = createCanvasContext(width, height)
+
+  if (!ctxA || !ctxB) {
+    ctx.rect(0, 0, width, height)
+    ctx.fillStyle = `rgb(${errorRGB})`
+    ctx.fill()
+
+    return { ctx, score: 1 }
+  }
+
   const dxA = (ctxA.canvas.width - width) * 0.5
   const dyA = (ctxA.canvas.height - height) * 0.5
   const dxB = (ctxB.canvas.width - width) * 0.5
@@ -162,7 +172,6 @@ const comparePages = (ctxA, ctxB) => {
   const imgA = ctxA.getImageData(dxA, dyA, width, height)
   const imgB = ctxB.getImageData(dxB, dyB, width, height)
 
-  const ctx = createCanvasContext(width, height)
   const diff = ctx.createImageData(width, height)
   const pixelShare = 1 / (width * height)
 
