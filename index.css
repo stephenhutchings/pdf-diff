@@ -312,6 +312,7 @@ footer a[href*="s-ings.com"]::before {
 @media (max-width: 60rem) {
   body {
     padding: 1rem;
+    gap: 1rem;
   }
 
   #result {
