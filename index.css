@@ -285,11 +285,21 @@ button {
   background: var(--color-error);
 }
 
-footer a::before {
+footer {
+  color: var(--color-text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+footer a:hover {
+  color: var(--color-text-strong);
+}
+
+footer a[href*="s-ings.com"]::before {
   content: "";
   display: inline-block;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 0.67rem;
+  height: 0.67rem;
   background: currentColor;
   transform: rotate(45deg);
   margin-inline-end: 0.75rem;
