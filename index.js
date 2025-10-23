@@ -94,24 +94,21 @@ const compareFiles = async (pdfA, pdfB) => {
         i <= docB.numPages ? docB.getPage(i) : null,
       ])
 
-      ctxA.clearRect(0, 0, ctxA.canvas.width, ctxA.canvas.height)
-      ctxB.clearRect(0, 0, ctxB.canvas.width, ctxB.canvas.height)
-
-      await renderContext(pageA, ctxA)
-      await renderContext(pageB, ctxB)
+      await renderPDFPage(pageA, ctxA)
+      await renderPDFPage(pageB, ctxB)
 
       const diff = comparePages(pageA && ctxA, pageB && ctxB)
 
-      await renderPage({
-        pageNumber: i,
-        titleA: pdfA.name,
-        titleB: pdfB.name,
+      await renderPageComparison(
+        i,
+        pdfA.name,
+        pdfB.name,
         ctxA,
         ctxB,
-        ctxC: diff.ctx,
-        score: diff.score,
-        titleRange,
-      })
+        diff.ctx,
+        diff.score,
+        titleRange
+      )
     }
   } catch (error) {
     console.error(error)
@@ -119,18 +116,6 @@ const compareFiles = async (pdfA, pdfB) => {
     dom.error.textContent =
       "The documents could not be read. Ensure the PDF files are valid."
   }
-}
-
-const renderContext = async (page, context) => {
-  if (!page) return
-
-  const scale = 2
-  const viewport = page.getViewport({ scale })
-
-  context.canvas.width = viewport.width
-  context.canvas.height = viewport.height
-
-  await page.render({ canvasContext: context, viewport }).promise
 }
 
 const compareTitles = (titleA, titleB) => {
@@ -229,6 +214,20 @@ const comparePages = (ctxA, ctxB) => {
   return { ctx, score: differenceScore * pixelShare }
 }
 
+const renderPDFPage = async (page, context) => {
+  context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+
+  if (!page) return
+
+  const scale = 2
+  const viewport = page.getViewport({ scale })
+
+  context.canvas.width = viewport.width
+  context.canvas.height = viewport.height
+
+  await page.render({ canvasContext: context, viewport }).promise
+}
+
 const renderImage = async (canvas, title, range) => {
   const div = document.createElement("div")
   const h3 = document.createElement("h3")
@@ -266,7 +265,7 @@ const renderPDFTitle = (element, title, [start, end] = [0, 0]) => {
   }
 }
 
-const renderPage = async ({
+const renderPageComparison = async (
   pageNumber,
   titleA,
   titleB,
@@ -274,8 +273,8 @@ const renderPage = async ({
   ctxB,
   ctxC,
   score,
-  titleRange,
-}) => {
+  titleRange
+) => {
   const hasDiff = score > threshold
 
   const page = document.createElement("li")
