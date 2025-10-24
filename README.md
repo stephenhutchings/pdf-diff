@@ -6,7 +6,7 @@ Use the tool [here](https://pdfdiff.s-ings.com/).
 
 ![Preview](./preview.png)
 
-Loosely based on [https://tools.simonwillison.net/compare-pdfs], but with the following features:
+Loosely based on https://tools.simonwillison.net/compare-pdfs, but with the following features:
 
 - Navigate quickly using the tab key
 - Pages with differences are clearly highlighted
