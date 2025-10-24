@@ -11,7 +11,7 @@ const dom = {
   pages: document.getElementById("pages"),
 }
 
-const threshold = 0.01
+const threshold = 0.001
 
 const STATE_ERROR = "has-error"
 const STATE_PAGES = "has-pages"
